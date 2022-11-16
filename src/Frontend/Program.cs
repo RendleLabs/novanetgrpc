@@ -6,6 +6,8 @@ var ingredientsAddress = OperatingSystem.IsMacOS()
     ? "http://localhost:5002"
     : "https://localhost:5003";
 
+AppContext.SetSwitch("System.Net.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
