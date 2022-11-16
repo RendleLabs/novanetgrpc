@@ -74,4 +74,26 @@ public class IngredientsImpl : Protos.IngredientsService.IngredientsServiceBase
             throw;
         }
     }
+
+    public override async Task<DecrementToppingsResponse> DecrementToppings(DecrementToppingsRequest request, ServerCallContext context)
+    {
+        foreach (var toppingId in request.ToppingIds)
+        {
+            await _toppingData.DecrementStockAsync(toppingId, context.CancellationToken);
+        }
+
+        return _decrementToppingsResponse;
+    }
+
+    private static readonly DecrementToppingsResponse _decrementToppingsResponse = new();
+
+    public override async Task<DecrementCrustsResponse> DecrementCrusts(DecrementCrustsRequest request, ServerCallContext context)
+    {
+        foreach (var crustId in request.CrustIds)
+        {
+            await _crustData.DecrementStockAsync(crustId, context.CancellationToken);
+        }
+
+        return new DecrementCrustsResponse();
+    }
 }
