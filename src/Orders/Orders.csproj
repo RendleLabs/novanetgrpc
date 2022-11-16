@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+    <PackageReference Include="Microsoft.Tye.Extensions.Configuration" Version="0.10.0-alpha.21420.1" />
   </ItemGroup>
   
   <ItemGroup>
     <Protobuf Include="Protos/orders.proto" GrpcServices="Client,Server" />
+    <Protobuf Include="Protos\ingredients.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
