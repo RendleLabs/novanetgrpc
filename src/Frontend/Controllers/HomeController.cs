@@ -18,6 +18,16 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
+        var toppings = await GetToppingsAsync();
+
+        var crusts = await GetCrustsAsync();
+        
+        var viewModel = new HomeViewModel(toppings, crusts);
+        return View(viewModel);
+    }
+
+    private async Task<List<ToppingViewModel>> GetToppingsAsync()
+    {
         var response = await _ingredients.GetToppingsAsync(new GetToppingsRequest());
 
         var toppings = response.Toppings.Select(t => new ToppingViewModel
@@ -27,14 +37,22 @@ public class HomeController : Controller
                 Price = Convert.ToDecimal(t.Price),
             })
             .ToList();
+        return toppings;
+    }
 
-        var crusts = new List<CrustViewModel>
-        {
-            new("thin9", "Thin", 9, 5m),
-            new("deep9", "Deep", 9, 6m),
-        };
-        var viewModel = new HomeViewModel(toppings, crusts);
-        return View(viewModel);
+    private async Task<List<CrustViewModel>> GetCrustsAsync()
+    {
+        var response = await _ingredients.GetCrustsAsync(new GetCrustsRequest());
+
+        var crusts = response.Crusts.Select(t => new CrustViewModel
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Size = t.Size,
+                Price = Convert.ToDecimal(t.Price),
+            })
+            .ToList();
+        return crusts;
     }
 
     public IActionResult Privacy()
