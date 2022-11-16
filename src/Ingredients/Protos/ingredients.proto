@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+import "decimal.proto";
+
 option csharp_namespace = "Ingredients.Protos";
 
 package ingredients;

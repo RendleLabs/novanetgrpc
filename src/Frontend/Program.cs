@@ -6,6 +6,10 @@ var ingredientsAddress = OperatingSystem.IsMacOS()
     ? "http://localhost:5002"
     : "https://localhost:5003";
 
+var binding = OperatingSystem.IsMacOS() ? "http" : "https";
+
+var ingredientsUri = builder.Configuration.GetServiceUri("ingredients", binding) ?? new Uri(ingredientsAddress);
+
 AppContext.SetSwitch("System.Net.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
 // Add services to the container.
@@ -13,7 +17,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddGrpcClient<IngredientsService.IngredientsServiceClient>(o =>
 {
-    o.Address = new Uri(ingredientsAddress);
+    o.Address = ingredientsUri;
 });
 
 var app = builder.Build();
