@@ -1,3 +1,5 @@
+using AuthHelp;
+using Grpc.Core;
 using Ingredients.Protos;
 using Orders.Protos;
 
@@ -11,10 +13,7 @@ var ingredientsAddress = OperatingSystem.IsMacOS()
 
 var ingredientsUri = builder.Configuration.GetServiceUri("ingredients", binding) ?? new Uri(ingredientsAddress);
 
-builder.Services.AddGrpcClient<IngredientsService.IngredientsServiceClient>(o =>
-{
-    o.Address = ingredientsUri;
-});
+builder.Services.AddGrpcClient<IngredientsService.IngredientsServiceClient>(o => { o.Address = ingredientsUri; });
 
 var ordersAddress = OperatingSystem.IsMacOS()
     ? "http://localhost:5004"
@@ -22,10 +21,16 @@ var ordersAddress = OperatingSystem.IsMacOS()
 
 var ordersUri = builder.Configuration.GetServiceUri("orders", binding) ?? new Uri(ordersAddress);
 
-builder.Services.AddGrpcClient<OrderService.OrderServiceClient>(o =>
-{
-    o.Address = ordersUri;
-});
+builder.Services.AddGrpcClient<OrderService.OrderServiceClient>(o => { o.Address = ordersUri; })
+    .ConfigureChannel(channel =>
+    {
+        var callCredentials = CallCredentials.FromInterceptor(async (_, metadata) =>
+        {
+            var token = JwtHelper.GenerateJwtToken("frontend");
+            metadata.Add("Authorization", $"Bearer {token}");
+        });
+        channel.Credentials = ChannelCredentials.Create(ChannelCredentials.SecureSsl, callCredentials);
+    });
 
 AppContext.SetSwitch("System.Net.SocketsHttpHandler.Http2UnencryptedSupport", true);
 

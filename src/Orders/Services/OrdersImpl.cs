@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Ingredients.Protos;
+using Microsoft.AspNetCore.Authorization;
 using Orders.Protos;
 using Orders.PubSub;
 
@@ -11,18 +12,25 @@ public class OrdersImpl : OrderService.OrderServiceBase
     private readonly IngredientsService.IngredientsServiceClient _ingredients;
     private readonly IOrderPublisher _orderPublisher;
     private readonly IOrderMessages _orderMessages;
+    private readonly ILogger<OrdersImpl> _logger;
 
     public OrdersImpl(IngredientsService.IngredientsServiceClient ingredients,
         IOrderPublisher orderPublisher,
-        IOrderMessages orderMessages)
+        IOrderMessages orderMessages,
+        ILogger<OrdersImpl> logger)
     {
         _ingredients = ingredients;
         _orderPublisher = orderPublisher;
         _orderMessages = orderMessages;
+        _logger = logger;
     }
 
+    [Authorize]
     public override async Task<PlaceOrderResponse> PlaceOrder(PlaceOrderRequest request, ServerCallContext context)
     {
+        _logger.LogInformation("Order placed from {Client}",
+            context.GetHttpContext().User.Identity.Name);
+        
         if (request.CrustId.Length == 0)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, "crust_id is required"));
