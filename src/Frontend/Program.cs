@@ -1,9 +1,11 @@
 using Ingredients.Protos;
 using Orders.Protos;
 
+var runningInContainer = "true".Equals(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
+
 var builder = WebApplication.CreateBuilder(args);
 
-var binding = OperatingSystem.IsMacOS() ? "http" : "https";
+var binding = OperatingSystem.IsMacOS() || runningInContainer ? "http" : "https";
 
 var ingredientsAddress = OperatingSystem.IsMacOS()
     ? "http://localhost:5002"

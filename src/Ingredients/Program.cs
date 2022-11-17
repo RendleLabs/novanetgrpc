@@ -2,7 +2,17 @@ using Ingredients.Data;
 using Ingredients.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
+var runningInContainer = "true".Equals(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
+
 var builder = WebApplication.CreateBuilder(args);
+
+if (runningInContainer)
+{
+    builder.WebHost.ConfigureKestrel(k =>
+    {
+        k.ConfigureEndpointDefaults(o => o.Protocols = HttpProtocols.Http2);
+    });
+}
 
 if (OperatingSystem.IsMacOS())
 {
