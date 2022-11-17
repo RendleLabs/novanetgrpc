@@ -19,6 +19,8 @@ public class IngredientsImpl : Protos.IngredientsService.IngredientsServiceBase
 
     public override async Task<GetToppingsResponse> GetToppings(GetToppingsRequest request, ServerCallContext context)
     {
+        _logger.LogInformation("GetToppings");
+        
         try
         {
             var toppings = await _toppingData.GetAsync(context.CancellationToken);
@@ -48,6 +50,8 @@ public class IngredientsImpl : Protos.IngredientsService.IngredientsServiceBase
 
     public override async Task<GetCrustsResponse> GetCrusts(GetCrustsRequest request, ServerCallContext context)
     {
+        _logger.LogInformation("GetCrusts");
+        
         try
         {
             var crusts = await _crustData.GetAsync(context.CancellationToken);

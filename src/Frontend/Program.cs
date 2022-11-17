@@ -1,9 +1,12 @@
 using Ingredients.Protos;
+using JaegerTracing;
 using Orders.Protos;
 
 var runningInContainer = "true".Equals(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddJaegerTracing();
 
 var binding = OperatingSystem.IsMacOS() || runningInContainer ? "http" : "https";
 

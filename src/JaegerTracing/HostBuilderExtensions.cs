@@ -18,7 +18,7 @@ public static class HostBuilderExtensions
 
         if (name is not { Length: > 0 } || host is not { Length: > 0 } || port == 0) return builder;
 
-        var resourceBuilder = ResourceBuilder.CreateDefault().AddService(name);
+        var resourceBuilder = ResourceBuilder.CreateEmpty().AddService(name);
 
         builder.Logging.AddOpenTelemetry(options =>
         {
