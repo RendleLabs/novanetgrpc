@@ -1,4 +1,5 @@
 ﻿using Frontend.Models;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Protos;
 
@@ -30,8 +31,15 @@ public class OrdersController : Controller
             CrustId = viewModel.SelectedCrust,
         };
 
-        var response = await _orders.PlaceOrderAsync(placeOrderRequest);
-        ViewData["DueBy"] = response.DueBy.ToDateTimeOffset();
-        return View();
+        try
+        {
+            var response = await _orders.PlaceOrderAsync(placeOrderRequest);
+            ViewData["DueBy"] = response.DueBy.ToDateTimeOffset();
+            return View();
+        }
+        catch (RpcException ex) when (ex.Status.StatusCode == Grpc.Core.StatusCode.InvalidArgument)
+        {
+            return BadRequest(ex.Status.Detail);
+        }
     }
 }

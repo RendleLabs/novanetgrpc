@@ -23,6 +23,11 @@ public class OrdersImpl : OrderService.OrderServiceBase
 
     public override async Task<PlaceOrderResponse> PlaceOrder(PlaceOrderRequest request, ServerCallContext context)
     {
+        if (request.CrustId.Length == 0)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "crust_id is required"));
+        }
+        
         var decrementToppingsRequest = new DecrementToppingsRequest
         {
             ToppingIds = { request.ToppingIds }
