@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+*.Dockerfile
+.idea/
+.vs/
+.vscode/
+.git/
+*.pptx
